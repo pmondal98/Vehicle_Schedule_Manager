@@ -12,13 +12,14 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase (using compat version from CDN)
-let auth, db, analytics;
+let auth, db, analytics, schedulesDb;
 let isFirebaseConfigured = false;
 
 try {
   firebase.initializeApp(firebaseConfig);
   auth = firebase.auth();
   db = firebase.firestore();
+  schedulesDb = db.collection("schedules");
   analytics = firebase.analytics();
   isFirebaseConfigured = true;
   console.log("✅ Database initialized successfully");
@@ -450,7 +451,10 @@ document
   .addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const vehicleNumber = document.getElementById("vehicleNumber").value.trim();
+    const vehicleNumber = document
+      .getElementById("vehicleNumber")
+      .value.trim()
+      .toUpperCase();
     const fromDate = document.getElementById("fromDate").value;
     const toDate = document.getElementById("toDate").value;
     const notes = document.getElementById("notes").value.trim();
@@ -476,7 +480,7 @@ document
     try {
       await db.collection("schedules").add({
         userId: currentUser.uid,
-        vehicleNumber: vehicleNumber.toUpperCase(),
+        vehicleNumber: vehicleNumber,
         fromDate: fromDate,
         toDate: toDate,
         notes: notes,
@@ -530,3 +534,61 @@ document.getElementById("toDate").setAttribute("min", today);
 document.getElementById("fromDate").addEventListener("change", function () {
   document.getElementById("toDate").setAttribute("min", this.value);
 });
+
+// ========================================
+// SEARCH FUNCTIONALITY
+// ========================================
+
+const searchInput = document.getElementById("searchVehicleNumber");
+
+searchInput.addEventListener("input", function () {
+  const searchValue = searchInput.value.trim().toLowerCase();
+  const filteredSchedules = schedules.filter((schedule) =>
+    schedule.vehicleNumber.toLowerCase().includes(searchValue)
+  );
+
+  renderFilteredSchedules(filteredSchedules);
+});
+
+function renderFilteredSchedules(filteredSchedules) {
+  const container = document.getElementById("schedulesContainer");
+
+  if (filteredSchedules.length === 0) {
+    container.innerHTML =
+      '<div class="empty-state">No schedules found matching your search!</div>';
+    return;
+  }
+
+  container.innerHTML =
+    '<div class="schedules-grid">' +
+    filteredSchedules
+      .map(
+        (schedule) => `
+                    <div class="schedule-card">
+                        <div class="vehicle-number">${
+                          schedule.vehicleNumber
+                        }</div>
+                        <div class="date-range-display">
+                            <div class="schedule-date">📅 From: ${formatDate(
+                              schedule.fromDate
+                            )}</div>
+                            <div class="schedule-date">📅 To: ${formatDate(
+                              schedule.toDate
+                            )}</div>
+                            <div class="schedule-date" style="margin-top: 5px; font-weight: 600;">Duration: ${calculateDuration(
+                              schedule.fromDate,
+                              schedule.toDate
+                            )}</div>
+                        </div>
+                        <div class="schedule-notes">${
+                          schedule.notes || "No notes added"
+                        }</div>
+                        <button class="delete-btn" onclick="deleteSchedule('${
+                          schedule.id
+                        }')">Delete</button>
+                    </div>
+                `
+      )
+      .join("") +
+    "</div>";
+}
