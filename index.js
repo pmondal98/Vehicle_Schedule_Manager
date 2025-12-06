@@ -450,7 +450,10 @@ document
   .addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const vehicleNumber = document.getElementById("vehicleNumber").value.trim();
+    const vehicleNumber = document
+      .getElementById("vehicleNumber")
+      .value.trim()
+      .toUpperCase();
     const fromDate = document.getElementById("fromDate").value;
     const toDate = document.getElementById("toDate").value;
     const notes = document.getElementById("notes").value.trim();
