@@ -450,10 +450,7 @@ document
   .addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const vehicleNumber = document
-      .getElementById("vehicleNumber")
-      .value.trim()
-      .toUpperCase();
+    const vehicleNumber = document.getElementById("vehicleNumber").value.trim();
     const fromDate = document.getElementById("fromDate").value;
     const toDate = document.getElementById("toDate").value;
     const notes = document.getElementById("notes").value.trim();
@@ -479,7 +476,7 @@ document
     try {
       await db.collection("schedules").add({
         userId: currentUser.uid,
-        vehicleNumber: vehicleNumber,
+        vehicleNumber: vehicleNumber.toUpperCase(),
         fromDate: fromDate,
         toDate: toDate,
         notes: notes,
