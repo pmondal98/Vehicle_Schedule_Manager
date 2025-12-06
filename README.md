@@ -1,6 +1,6 @@
 # Vehicle Schedule Manager
 
-A web application to manage vehicle schedules, built using HTML, CSS, JavaScript, and Firebase.
+A web application to manage vehicle schedules, built using HTML, CSS, JavaScript.
 
 ## Features
 
