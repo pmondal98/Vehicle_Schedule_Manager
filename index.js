@@ -102,10 +102,10 @@ document
 
     const name = document.getElementById("signupName").value.trim();
     const email = document.getElementById("signupEmail").value.trim();
-    const password = document.getElementById("signupPassword").value;
-    const confirmPassword = document.getElementById(
-      "signupConfirmPassword"
-    ).value;
+    const password = document.getElementById("signupPassword").value.trim();
+    const confirmPassword = document
+      .getElementById("signupConfirmPassword")
+      .value.trim();
 
     if (password !== confirmPassword) {
       showError("signupError", "❌ Passwords do not match!");
@@ -183,7 +183,7 @@ document
     }
 
     const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value;
+    const password = document.getElementById("loginPassword").value.trim();
 
     try {
       await auth.signInWithEmailAndPassword(email, password);
