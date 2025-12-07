@@ -374,49 +374,6 @@ async function checkDateCollision(
   }
 }
 
-function renderSchedules() {
-  const container = document.getElementById("schedulesContainer");
-
-  if (schedules.length === 0) {
-    container.innerHTML =
-      '<div class="empty-state">No schedules yet. Add your first vehicle schedule above!</div>';
-    return;
-  }
-
-  container.innerHTML =
-    '<div class="schedules-grid">' +
-    schedules
-      .map(
-        (schedule) => `
-                    <div class="schedule-card">
-                        <div class="vehicle-number">${
-                          schedule.vehicleNumber
-                        }</div>
-                        <div class="date-range-display">
-                            <div class="schedule-date">📅 From: ${formatDate(
-                              schedule.fromDate
-                            )}</div>
-                            <div class="schedule-date">📅 To: ${formatDate(
-                              schedule.toDate
-                            )}</div>
-                            <div class="schedule-date" style="margin-top: 5px; font-weight: 600;">Duration: ${calculateDuration(
-                              schedule.fromDate,
-                              schedule.toDate
-                            )}</div>
-                        </div>
-                        <div class="schedule-notes">${
-                          schedule.notes || "No notes added"
-                        }</div>
-                        <button class="delete-btn" onclick="deleteSchedule('${
-                          schedule.id
-                        }')">Delete</button>
-                    </div>
-                `
-      )
-      .join("") +
-    "</div>";
-}
-
 function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
@@ -457,6 +414,9 @@ document
       .toUpperCase();
     const fromDate = document.getElementById("fromDate").value;
     const toDate = document.getElementById("toDate").value;
+    const passengerDetails = document
+      .getElementById("passengerDetails")
+      .value.trim();
     const notes = document.getElementById("notes").value.trim();
 
     if (new Date(fromDate) > new Date(toDate)) {
@@ -483,6 +443,7 @@ document
         vehicleNumber: vehicleNumber,
         fromDate: fromDate,
         toDate: toDate,
+        passengerDetails: passengerDetails,
         notes: notes,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
@@ -547,21 +508,35 @@ searchInput.addEventListener("input", function () {
     schedule.vehicleNumber.toLowerCase().includes(searchValue)
   );
 
-  renderFilteredSchedules(filteredSchedules);
+  renderSchedules(filteredSchedules);
 });
 
-function renderFilteredSchedules(filteredSchedules) {
+function renderSchedules(filteredSchedules = null) {
   const container = document.getElementById("schedulesContainer");
+  const schedulesToRender =
+    filteredSchedules !== null ? filteredSchedules : schedules;
 
-  if (filteredSchedules.length === 0) {
-    container.innerHTML =
-      '<div class="empty-state">No schedules found matching your search!</div>';
+  if (schedulesToRender.length === 0) {
+    // Check if this is a search result or just empty schedules
+    const searchInput = document.getElementById("searchVehicleNumber");
+    const isActiveSearch = searchInput && searchInput.value.trim().length > 0;
+    const isSearchResult = filteredSchedules !== null && isActiveSearch;
+
+    const icon = isSearchResult ? "🔍" : "📋";
+    const message = isSearchResult
+      ? "No schedules found matching your search!"
+      : "No schedules yet. Add your first vehicle schedule above!";
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">${icon}</div>
+        <div class="empty-state-message">${message}</div>
+      </div>`;
     return;
   }
 
   container.innerHTML =
     '<div class="schedules-grid">' +
-    filteredSchedules
+    schedulesToRender
       .map(
         (schedule) => `
                     <div class="schedule-card">
@@ -580,7 +555,10 @@ function renderFilteredSchedules(filteredSchedules) {
                               schedule.toDate
                             )}</div>
                         </div>
-                        <div class="schedule-notes">${
+                        <div class="passenger-details"><strong>Passenger Details: </strong>${
+                          schedule.passengerDetails || "No details found"
+                        }</div>
+                        <div class="schedule-notes-display">${
                           schedule.notes || "No notes added"
                         }</div>
                         <button class="delete-btn" onclick="deleteSchedule('${
