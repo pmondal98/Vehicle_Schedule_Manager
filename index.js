@@ -32,6 +32,7 @@ try {
 // ========================================
 let currentUser = null;
 let schedules = [];
+let currentScheduleId = null; // For expense modal
 
 // ========================================
 // PAGE NAVIGATION
@@ -417,6 +418,7 @@ document
     const passengerDetails = document
       .getElementById("passengerDetails")
       .value.trim();
+    const bookingAmount = document.getElementById("bookingAmount").value.trim();
     const notes = document.getElementById("notes").value.trim();
 
     if (new Date(fromDate) > new Date(toDate)) {
@@ -444,7 +446,9 @@ document
         fromDate: fromDate,
         toDate: toDate,
         passengerDetails: passengerDetails,
+        bookingAmount: parseFloat(bookingAmount),
         notes: notes,
+        expenses: [], // Initialize empty expenses array
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
@@ -463,6 +467,209 @@ document
       showError("errorMessage", "❌ Failed to add schedule");
     }
   });
+
+// ========================================
+// EXPENSE MANAGEMENT
+// ========================================
+function openExpenseModal(scheduleId) {
+  currentScheduleId = scheduleId;
+  const schedule = schedules.find((s) => s.id === scheduleId);
+
+  if (!schedule) return;
+
+  // Display vehicle info
+  document.getElementById("expenseVehicleInfo").innerHTML = `
+    <strong>Vehicle:</strong> ${schedule.vehicleNumber}<br>
+    <strong>Date Range:</strong> ${formatDate(
+      schedule.fromDate
+    )} - ${formatDate(schedule.toDate)}
+  `;
+
+  // Set booking amount in edit field
+  const bookingAmount = parseFloat(schedule.bookingAmount) || 0;
+  document.getElementById("editBookingAmount").value = bookingAmount;
+
+  // Display existing expenses
+  renderExpensesList(schedule.expenses || []);
+
+  // Show modal
+  document.getElementById("expenseModal").classList.remove("hidden");
+  document.body.style.overflow = "hidden"; // Prevent background scrolling
+}
+
+function closeExpenseModal() {
+  document.getElementById("expenseModal").classList.add("hidden");
+  document.getElementById("expenseForm").reset();
+  currentScheduleId = null;
+  document.body.style.overflow = ""; // Restore scrolling
+}
+
+function renderExpensesList(expenses) {
+  const container = document.getElementById("expensesList");
+
+  if (!expenses || expenses.length === 0) {
+    container.innerHTML =
+      '<p style="text-align: center; color: #999; padding: 20px;">No expenses added yet</p>';
+    return;
+  }
+
+  const total = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+  container.innerHTML = `
+    <div class="expenses-header">
+      <h3>Expenses List</h3>
+      <div class="total-expense">Total: ₹${total.toFixed(2)}</div>
+    </div>
+    <div class="expense-items">
+      ${expenses
+        .map(
+          (expense, index) => `
+        <div class="expense-item">
+          <div class="expense-details">
+            <span class="expense-description">${expense.description}</span>
+            <span class="expense-amount">₹${parseFloat(expense.amount).toFixed(
+              2
+            )}</span>
+          </div>
+          <button class="delete-expense-btn" onclick="deleteExpense(${index})">×</button>
+        </div>
+      `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+async function deleteExpense(index) {
+  if (!currentScheduleId) return;
+
+  const schedule = schedules.find((s) => s.id === currentScheduleId);
+  if (!schedule) return;
+
+  const expenses = schedule.expenses || [];
+  expenses.splice(index, 1);
+
+  try {
+    await db.collection("schedules").doc(currentScheduleId).update({
+      expenses: expenses,
+    });
+
+    await loadSchedules();
+    renderExpensesList(expenses);
+  } catch (error) {
+    console.error("Error deleting expense:", error);
+    alert("Failed to delete expense");
+  }
+}
+
+// Expense Form Handler
+document
+  .getElementById("expenseForm")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    if (!currentScheduleId) return;
+
+    const description = document
+      .getElementById("expenseDescription")
+      .value.trim();
+    const amount = document.getElementById("expenseAmount").value.trim();
+
+    const schedule = schedules.find((s) => s.id === currentScheduleId);
+    if (!schedule) return;
+
+    const expenses = schedule.expenses || [];
+    expenses.push({
+      description: description,
+      amount: parseFloat(amount),
+      addedAt: new Date().toISOString(),
+    });
+
+    try {
+      await db.collection("schedules").doc(currentScheduleId).update({
+        expenses: expenses,
+      });
+
+      // Track expense event
+      if (analytics) {
+        analytics.logEvent("expense_added", {
+          vehicle_number: schedule.vehicleNumber,
+          amount: amount,
+        });
+      }
+
+      this.reset();
+      await loadSchedules();
+      renderExpensesList(expenses);
+    } catch (error) {
+      console.error("Error adding expense:", error);
+      alert("Failed to add expense");
+    }
+  });
+
+// Close modal when clicking outside
+document.getElementById("expenseModal").addEventListener("click", function (e) {
+  if (e.target === this) {
+    closeExpenseModal();
+  }
+});
+
+// Update Booking Amount Function
+async function updateBookingAmount() {
+  if (!currentScheduleId) return;
+
+  const newBookingAmount = document
+    .getElementById("editBookingAmount")
+    .value.trim();
+
+  if (!newBookingAmount || parseFloat(newBookingAmount) < 0) {
+    alert("Please enter a valid booking amount");
+    return;
+  }
+
+  const schedule = schedules.find((s) => s.id === currentScheduleId);
+  if (!schedule) return;
+
+  try {
+    await db
+      .collection("schedules")
+      .doc(currentScheduleId)
+      .update({
+        bookingAmount: parseFloat(newBookingAmount),
+      });
+
+    // Track booking update event
+    if (analytics) {
+      analytics.logEvent("booking_amount_updated", {
+        vehicle_number: schedule.vehicleNumber,
+        new_amount: newBookingAmount,
+      });
+    }
+
+    //alert("✅ Booking amount updated successfully!");
+    await loadSchedules();
+
+    // Update the expenses list to show new profit/loss
+    renderExpensesList(schedule.expenses || []);
+  } catch (error) {
+    console.error("Error updating booking amount:", error);
+    alert("Failed to update booking amount");
+  }
+}
+
+function calculateTotalExpenses(expenses) {
+  if (!expenses || expenses.length === 0) return 0;
+  return expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+}
+
+function calculateProfitLoss(bookingAmount, expenses) {
+  const totalExpenses = calculateTotalExpenses(expenses);
+  const profitLoss = bookingAmount - totalExpenses;
+  return {
+    profitLoss: profitLoss,
+    isProfit: profitLoss >= 0,
+  };
+}
 
 // ========================================
 // UTILITY FUNCTIONS
@@ -537,8 +744,15 @@ function renderSchedules(filteredSchedules = null) {
   container.innerHTML =
     '<div class="schedules-grid">' +
     schedulesToRender
-      .map(
-        (schedule) => `
+      .map((schedule) => {
+        const totalExpenses = calculateTotalExpenses(schedule.expenses || []);
+        const bookingAmount = parseFloat(schedule.bookingAmount) || 0;
+        const { profitLoss, isProfit } = calculateProfitLoss(
+          bookingAmount,
+          schedule.expenses || []
+        );
+
+        return `
                     <div class="schedule-card">
                         <div class="vehicle-number">${
                           schedule.vehicleNumber
@@ -558,15 +772,46 @@ function renderSchedules(filteredSchedules = null) {
                         <div class="passenger-details"><strong>Passenger Details: </strong>${
                           schedule.passengerDetails || "No details found"
                         }</div>
+                        <div class="booking-amount-display">
+                            <strong>Booking Amount:</strong> ₹${bookingAmount.toFixed(
+                              2
+                            )}
+                        </div>
                         <div class="schedule-notes-display">${
                           schedule.notes || "No notes added"
                         }</div>
-                        <button class="delete-btn" onclick="deleteSchedule('${
-                          schedule.id
-                        }')">Delete</button>
+                        <div class="expense-summary">
+                            <strong>Total Expenses:</strong> ₹${totalExpenses.toFixed(
+                              2
+                            )}
+                            ${
+                              schedule.expenses && schedule.expenses.length > 0
+                                ? `<span class="expense-count">(${
+                                    schedule.expenses.length
+                                  } item${
+                                    schedule.expenses.length > 1 ? "s" : ""
+                                  })</span>`
+                                : ""
+                            }
+                        </div>
+                        <div class="profit-loss-display ${
+                          isProfit ? "profit" : "loss"
+                        }">
+                            <strong>${
+                              isProfit ? "💰 Profit:" : "📉 Loss:"
+                            }</strong> ₹${Math.abs(profitLoss).toFixed(2)}
+                        </div>
+                        <div class="action-buttons">
+                            <button class="edit-btn" onclick="openExpenseModal('${
+                              schedule.id
+                            }')">Manage Expenses</button>
+                            <button class="delete-btn" onclick="deleteSchedule('${
+                              schedule.id
+                            }')">Delete</button>
+                        </div>
                     </div>
-                `
-      )
+                `;
+      })
       .join("") +
     "</div>";
 }
