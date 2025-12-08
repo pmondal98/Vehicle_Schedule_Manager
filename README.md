@@ -170,9 +170,6 @@ A: Internet connection required for real-time cloud sync and backup.
 **Q: Can I book the same vehicle for overlapping dates?**  
 A: No, collision detection prevents double-booking automatically.
 
-**Q: How many schedules can I create?**  
-A: Unlimited! Create as many as needed.
-
 **Q: Can I edit expenses?**  
 A: Delete and re-add with correct information. Direct editing coming in future updates.
 
