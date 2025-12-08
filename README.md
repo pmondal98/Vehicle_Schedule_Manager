@@ -1,16 +1,42 @@
 # 🚗 Vehicle Schedule Manager
 
-A web application for managing vehicle bookings, tracking expenses, and calculating profit/loss for fleet operators and taxi services.
+A comprehensive web application for managing vehicle schedules, tracking expenses, and calculating profit/loss for vehicle bookings. Perfect for taxi operators, rental services, and fleet managers.
+
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Status](https://img.shields.io/badge/status-active-success.svg)
 
 ## ✨ Features
 
-- **🔐 Secure Authentication** - Sign up, login, and password reset
-- **📅 Schedule Management** - Track bookings with dates, vehicle numbers, and passenger details
-- **💰 Expense Tracking** - Add multiple expenses (fuel, toll, food, etc.) per schedule
-- **📊 Profit/Loss Analysis** - Real-time calculation with visual indicators
-- **✏️ Edit Booking Amounts** - Update fares anytime with instant recalculation
-- **🔍 Quick Search** - Find schedules by vehicle number
-- **📱 Fully Responsive** - Works on mobile, tablet, and desktop
+### 🔐 Authentication & Security
+
+- User registration and secure login with Firebase Auth
+- Password recovery via email reset link
+- Persistent sessions across browser sessions
+- User data isolation and encryption
+
+### 📅 Schedule Management
+
+- Create vehicle schedules with dates, vehicle numbers, and passenger details
+- Track booking amounts/fares
+- Add notes for destinations, advance payments, and instructions
+- Smart collision detection prevents double-booking
+- Automatic trip duration calculation
+
+### 💰 Expense Tracking & Analysis
+
+- Add multiple expenses per schedule (fuel, tolls, food, maintenance)
+- Delete individual expenses as needed
+- Automatic total expense calculation
+- **Real-time profit/loss calculation**: `Booking Amount - Total Expenses`
+- Visual indicators: 💰 Green for profit, 📉 Red for loss
+- Edit booking amounts anytime with instant recalculation
+
+### 🔍 Additional Features
+
+- Quick search by vehicle number with real-time filtering
+- Fully responsive design (mobile, tablet, desktop)
+- Touch-friendly interface
+- Modern UI with glassmorphism effects
 
 ## 🛠️ Tech Stack
 
@@ -18,36 +44,163 @@ A web application for managing vehicle bookings, tracking expenses, and calculat
 - **Backend**: Firebase (Authentication, Cloud Firestore, Analytics)
 - **Styling**: Custom CSS with responsive grid layout
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
-1. **Sign Up** - Create account with email and password
-2. **Add Schedule** - Enter vehicle number, dates, passenger details, and booking amount
-3. **Manage Expenses** - Click "Manage Expenses" to add costs and edit booking amounts
-4. **Track Profit/Loss** - View automatic calculations: `Booking Amount - Total Expenses`
+### Create Account
 
-## 📊 Profit/Loss Formula
+1. Click **"Sign Up"**
+2. Enter name, email, and password (minimum 6 characters)
+3. Click **"Sign Up"** - you'll be auto-logged in
+
+### Login
+
+1. Enter your email and password
+2. Click **"Login"**
+
+### Forgot Password?
+
+1. Click **"Forgot Password?"** on login page
+2. Enter email and check for reset link
+3. Create new password and login
+
+## 📖 How to Use
+
+### Adding a Schedule
+
+**Fill in the form:**
+
+- **Vehicle Number**: Registration number (e.g., WB40AR1234)
+- **From/To Date**: Booking period
+- **Passenger Details**: Name and contact info
+- **Booking Amount**: Total fare in ₹
+- **Notes**: Destination, advance payment, special instructions
+
+**Click "Add Schedule"** - Your schedule appears with initial profit/loss
+
+### Managing Expenses
+
+1. **Click "Manage Expenses"** on any schedule card
+
+2. **Edit Booking Amount (if needed):**
+
+   - Update amount in green section
+   - Click **"Update"**
+   - Get confirmation message
+
+3. **Add Expenses:**
+
+   - Enter description (e.g., "Fuel", "Toll")
+   - Enter amount in ₹
+   - Click **"Add Expense"**
+   - View updated total and profit/loss
+
+4. **Delete Expenses:**
+   - Click × button next to any expense
+
+### Search & Delete
+
+- **Search**: Type vehicle number in search bar - results filter instantly
+- **Delete**: Click "Delete" button on schedule card to remove permanently
+
+## 📊 Profit/Loss Calculation
+
+### Formula
 
 ```
 Profit/Loss = Booking Amount - Total Expenses
-
-Example:
-- Booking: ₹10,000
-- Expenses: ₹4,500 (Fuel + Toll + Food)
-- Result: ₹5,500 Profit ✅ (shown in green)
 ```
 
-## 🎯 Key Capabilities
+### Example 1: PROFIT ✅
 
-- Prevent double-booking with collision detection
-- Real-time search and filtering
-- Color-coded financial indicators (green = profit, red = loss)
-- Mobile-optimized touch-friendly interface
-- Secure cloud data storage
+```
+Booking Amount: ₹10,000
+Expenses:
+  • Fuel: ₹3,000
+  • Toll: ₹500
+  • Food: ₹1,000
+Total Expenses: ₹4,500
+Result: ₹5,500 PROFIT (Green 💰)
+```
+
+### Example 2: LOSS ❌
+
+```
+Booking Amount: ₹8,000
+Expenses:
+  • Fuel: ₹5,000
+  • Maintenance: ₹2,800
+  • Toll: ₹1,000
+Total Expenses: ₹8,800
+Result: ₹800 LOSS (Red 📉)
+```
+
+**Updates automatically** when you add/delete expenses or update booking amounts.
+
+## 💡 Best Practices
+
+### Organization Tips
+
+- Use full registration numbers consistently (e.g., WB40AR1234)
+- Add complete passenger details with phone numbers
+- Record all expenses immediately as they occur
+- Add detailed notes (pickup/drop locations, advance payments)
+- Update booking amounts if fares change
+
+### Maximize Features
+
+- ✅ Use search to quickly find schedules and review history
+- ✅ Edit booking amounts when customers pay extra or discounts apply
+- ✅ Review profit/loss to identify profitable routes
+- ✅ Delete old/cancelled schedules to keep dashboard clean
+
+## ❓ FAQ
+
+**Q: Is my data safe?**  
+A: Yes! Securely stored in Firebase with enterprise-grade security. Only you can access your data.
+
+**Q: Can I use this on mobile?**  
+A: Absolutely! Fully responsive and works on all devices.
+
+**Q: Do I need to install anything?**  
+A: No installation needed - just open in your web browser.
+
+**Q: Can I use offline?**  
+A: Internet connection required for real-time cloud sync and backup.
+
+**Q: Can I book the same vehicle for overlapping dates?**  
+A: No, collision detection prevents double-booking automatically.
+
+**Q: How many schedules can I create?**  
+A: Unlimited! Create as many as needed.
+
+**Q: Can I edit expenses?**  
+A: Delete and re-add with correct information. Direct editing coming in future updates.
+
+**Q: What expenses can I track?**  
+A: Any trip-related: Fuel, Toll, Food, Parking, Maintenance, Driver Salary, Repairs, etc.
+
+**Q: Forgot password - what do I do?**  
+A: Click "Forgot Password?" on login page and check email for reset link.
+
+## 🎨 Color System
+
+- 🔵 **Blue**: Vehicle numbers and headers
+- 🟢 **Green**: Booking amounts and profit
+- 🟡 **Yellow**: Expense summaries
+- 🔴 **Red**: Loss indicators
+- 💙 **Light Blue**: Passenger details and notes
 
 ## 📞 Support
 
 **Contact**: [pmondal98.netlify.app](https://pmondal98.netlify.app/)  
-**Founder**: Prabhas Mondal
+**Developer**: Prabhas Mondal
+
+### Common Issues
+
+- **Can't login**: Check email spelling, verify password, use "Forgot Password"
+- **Schedule not appearing**: Refresh page, check internet connection
+- **Profit/loss not updating**: Close/reopen expense modal, refresh page
+- **Search not working**: Clear search box and try again, or refresh page
 
 ---
 
