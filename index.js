@@ -614,7 +614,7 @@ document.getElementById("expenseModal").addEventListener("click", function (e) {
   }
 });
 
-// Update Booking Amount Function
+// Update Total Fare Function
 async function updateBookingAmount() {
   if (!currentScheduleId) return;
 
@@ -773,7 +773,7 @@ function renderSchedules(filteredSchedules = null) {
                           schedule.passengerDetails || "No details found"
                         }</div>
                         <div class="booking-amount-display">
-                            <strong>Booking Amount:</strong> ₹${bookingAmount.toFixed(
+                            <strong>Total Fare:</strong> ₹${bookingAmount.toFixed(
                               2
                             )}
                         </div>

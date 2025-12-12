@@ -200,16 +200,16 @@
               <input
                 type="text"
                 id="passengerDetails"
-                placeholder="Add passenger names, contact..."
+                placeholder="Add passenger name, contact..."
               />
             </div>
 
             <div class="form-group">
-              <label for="bookingAmount">Booking Amount (₹)</label>
+              <label for="bookingAmount">Total Fare (₹)</label>
               <input
                 type="number"
                 id="bookingAmount"
-                placeholder="Enter amount"
+                placeholder="Enter total fare amount not the advance"
                 min="0"
                 step="0.01"
                 required
@@ -221,7 +221,7 @@
             <label for="notes">Notes</label>
             <textarea
               id="notes"
-              placeholder="Add destination, total fare, advance, or any other information..."
+              placeholder="Add destination, advance or any other information..."
             ></textarea>
           </div>
 
@@ -251,10 +251,10 @@
         <div class="modal-body">
           <div id="expenseVehicleInfo" class="expense-vehicle-info"></div>
           
-          <!-- Edit Booking Amount Section -->
+          <!-- Edit Total Fare Section -->
           <div class="edit-booking-section">
             <div class="form-group">
-              <label for="editBookingAmount">Booking Amount (₹)</label>
+              <label for="editBookingAmount">Total Fare (₹)</label>
               <div class="booking-edit-row">
                 <input
                   type="number"

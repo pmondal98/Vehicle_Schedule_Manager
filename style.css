@@ -262,7 +262,7 @@ textarea {
   gap: 15px;
 }
 
-/* Form Row Inline - for Passenger Details and Booking Amount */
+/* Form Row Inline - for Passenger Details and Total Fare */
 .form-row-inline {
   display: grid;
   grid-template-columns: 1fr;
@@ -524,7 +524,7 @@ textarea {
   color: #333;
 }
 
-/* Edit Booking Amount Section */
+/* Edit Total Fare Section */
 .edit-booking-section {
   background: #e8f5e9;
   padding: 15px;
