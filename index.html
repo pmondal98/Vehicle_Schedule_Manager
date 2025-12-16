@@ -229,6 +229,20 @@
         </form>
       </div>
 
+      <!-- Tab Navigation -->
+      <div class="schedule-tabs">
+        <button
+          class="tab-btn active"
+          id="activeSchedulesTab"
+          data-tab="active"
+        >
+          📋 Active Schedules
+        </button>
+        <button class="tab-btn" id="archivedSchedulesTab" data-tab="archived">
+          📅 Completed Schedules
+        </button>
+      </div>
+
       <div class="search-container">
         <input
           type="text"
@@ -247,10 +261,10 @@
           <h2>Manage Expenses</h2>
           <span class="close-modal" onclick="closeExpenseModal()">&times;</span>
         </div>
-        
+
         <div class="modal-body">
           <div id="expenseVehicleInfo" class="expense-vehicle-info"></div>
-          
+
           <!-- Edit Total Fare Section -->
           <div class="edit-booking-section">
             <div class="form-group">
@@ -264,13 +278,19 @@
                   step="0.01"
                   required
                 />
-                <button type="button" class="btn-update-booking" onclick="updateBookingAmount()">Update</button>
+                <button
+                  type="button"
+                  class="btn-update-booking"
+                  onclick="updateBookingAmount()"
+                >
+                  Update
+                </button>
               </div>
             </div>
           </div>
 
           <div class="section-divider"></div>
-          
+
           <form id="expenseForm">
             <div class="form-group">
               <label for="expenseDescription">Description</label>
@@ -305,7 +325,12 @@
     <!-- Footer -->
     <footer class="app-footer">
       <p>&copy; 2025 Vehicle Schedule Manager. All rights reserved</p>
-      <p>Founded by <a href="https://pmondal98.netlify.app/" target="_blank">Prabhas Mondal</a></p>
+      <p>
+        Founded by
+        <a href="https://pmondal98.netlify.app/" target="_blank"
+          >Prabhas Mondal</a
+        >
+      </p>
     </footer>
 
     <!-- Your JavaScript file - loaded last -->

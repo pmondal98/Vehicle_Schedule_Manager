@@ -33,6 +33,7 @@ try {
 let currentUser = null;
 let schedules = [];
 let currentScheduleId = null; // For expense modal
+let currentTabFilter = "active"; // Track which tab is active
 
 // ========================================
 // PAGE NAVIGATION
@@ -711,17 +712,34 @@ const searchInput = document.getElementById("searchVehicleNumber");
 
 searchInput.addEventListener("input", function () {
   const searchValue = searchInput.value.trim().toLowerCase();
-  const filteredSchedules = schedules.filter((schedule) =>
+  const filteredSchedules = getFilteredSchedules().filter((schedule) =>
     schedule.vehicleNumber.toLowerCase().includes(searchValue)
   );
 
   renderSchedules(filteredSchedules);
 });
 
+function isScheduleArchived(schedule) {
+  const toDate = new Date(schedule.toDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  toDate.setHours(0, 0, 0, 0);
+  return toDate < today;
+}
+
+function getFilteredSchedules() {
+  if (currentTabFilter === "active") {
+    return schedules.filter((schedule) => !isScheduleArchived(schedule));
+  } else {
+    return schedules.filter((schedule) => isScheduleArchived(schedule));
+  }
+}
+
 function renderSchedules(filteredSchedules = null) {
   const container = document.getElementById("schedulesContainer");
+  const baseSchedules = getFilteredSchedules();
   const schedulesToRender =
-    filteredSchedules !== null ? filteredSchedules : schedules;
+    filteredSchedules !== null ? filteredSchedules : baseSchedules;
 
   if (schedulesToRender.length === 0) {
     // Check if this is a search result or just empty schedules
@@ -729,9 +747,15 @@ function renderSchedules(filteredSchedules = null) {
     const isActiveSearch = searchInput && searchInput.value.trim().length > 0;
     const isSearchResult = filteredSchedules !== null && isActiveSearch;
 
-    const icon = isSearchResult ? "🔍" : "📋";
+    const icon = isSearchResult
+      ? "🔍"
+      : currentTabFilter === "archived"
+      ? "📅"
+      : "📋";
     const message = isSearchResult
       ? "No schedules found matching your search!"
+      : currentTabFilter === "archived"
+      ? "No completed schedules yet!"
       : "No schedules yet. Add your first vehicle schedule above!";
     container.innerHTML = `
       <div class="empty-state">
@@ -751,9 +775,16 @@ function renderSchedules(filteredSchedules = null) {
           bookingAmount,
           schedule.expenses || []
         );
+        const isArchived = isScheduleArchived(schedule);
+        const archiveClass = isArchived ? "archived" : "";
 
         return `
-                    <div class="schedule-card">
+                    <div class="schedule-card ${archiveClass}">
+                        ${
+                          isArchived
+                            ? '<div class="archived-badge">✓ Completed</div>'
+                            : ""
+                        }
                         <div class="vehicle-number">${
                           schedule.vehicleNumber
                         }</div>
@@ -815,3 +846,26 @@ function renderSchedules(filteredSchedules = null) {
       .join("") +
     "</div>";
 }
+
+// ========================================
+// TAB SWITCHING
+// ========================================
+document
+  .getElementById("activeSchedulesTab")
+  .addEventListener("click", function () {
+    currentTabFilter = "active";
+    document.getElementById("activeSchedulesTab").classList.add("active");
+    document.getElementById("archivedSchedulesTab").classList.remove("active");
+    document.getElementById("searchVehicleNumber").value = "";
+    renderSchedules();
+  });
+
+document
+  .getElementById("archivedSchedulesTab")
+  .addEventListener("click", function () {
+    currentTabFilter = "archived";
+    document.getElementById("archivedSchedulesTab").classList.add("active");
+    document.getElementById("activeSchedulesTab").classList.remove("active");
+    document.getElementById("searchVehicleNumber").value = "";
+    renderSchedules();
+  });
