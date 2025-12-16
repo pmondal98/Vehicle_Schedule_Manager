@@ -322,6 +322,33 @@
       </div>
     </div>
 
+    <!-- Notes Editor Modal -->
+    <div id="notesModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Edit Notes</h2>
+          <span class="close-modal" onclick="closeNotesModal()">&times;</span>
+        </div>
+
+        <div class="modal-body">
+          <div id="notesVehicleInfo" class="expense-vehicle-info"></div>
+
+          <form id="notesForm">
+            <div class="form-group">
+              <label for="editNotes">Notes</label>
+              <textarea
+                id="editNotes"
+                placeholder="Add destination, advance or any other information..."
+                style="min-height: 150px"
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn">Save Notes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="app-footer">
       <p>&copy; 2025 Vehicle Schedule Manager. All rights reserved</p>

@@ -808,9 +808,30 @@ function renderSchedules(filteredSchedules = null) {
                               2
                             )}
                         </div>
-                        <div class="schedule-notes-display">${
-                          schedule.notes || "No notes added"
-                        }</div>
+                        <div class="schedule-notes-section">
+                            <div class="schedule-notes-display" id="notes-display-${
+                              schedule.id
+                            }">${
+          schedule.notes || "No notes added"
+        }<button class="notes-edit-icon" onclick="toggleNotesEdit('${
+          schedule.id
+        }')">✎</button></div>
+                            <textarea class="notes-textarea hidden" id="notes-textarea-${
+                              schedule.id
+                            }" placeholder="Add notes...">${
+          schedule.notes || ""
+        }</textarea>
+                            <div class="notes-actions hidden" id="notes-actions-${
+                              schedule.id
+                            }">
+                                <button class="btn-save-notes" onclick="saveNotes('${
+                                  schedule.id
+                                }')">Save</button>
+                                <button class="btn-cancel-notes" onclick="cancelNotesEdit('${
+                                  schedule.id
+                                }')">Cancel</button>
+                            </div>
+                        </div>
                         <div class="expense-summary">
                             <strong>Total Expenses:</strong> ₹${totalExpenses.toFixed(
                               2
@@ -845,6 +866,68 @@ function renderSchedules(filteredSchedules = null) {
       })
       .join("") +
     "</div>";
+}
+
+// ========================================
+// NOTES MANAGEMENT - INLINE EDITING
+// ========================================
+function toggleNotesEdit(scheduleId) {
+  const display = document.getElementById(`notes-display-${scheduleId}`);
+  const textarea = document.getElementById(`notes-textarea-${scheduleId}`);
+  const actions = document.getElementById(`notes-actions-${scheduleId}`);
+  const icon = document.querySelector(
+    `[onclick="toggleNotesEdit('${scheduleId}')"]`
+  );
+
+  display.classList.toggle("hidden");
+  textarea.classList.toggle("hidden");
+  actions.classList.toggle("hidden");
+  if (icon) icon.classList.toggle("hidden");
+
+  if (!textarea.classList.contains("hidden")) {
+    textarea.focus();
+  }
+}
+
+function cancelNotesEdit(scheduleId) {
+  const display = document.getElementById(`notes-display-${scheduleId}`);
+  const textarea = document.getElementById(`notes-textarea-${scheduleId}`);
+  const actions = document.getElementById(`notes-actions-${scheduleId}`);
+  const icon = document.querySelector(
+    `[onclick="toggleNotesEdit('${scheduleId}')"]`
+  );
+
+  display.classList.remove("hidden");
+  textarea.classList.add("hidden");
+  actions.classList.add("hidden");
+  if (icon) icon.classList.remove("hidden");
+}
+
+async function saveNotes(scheduleId) {
+  const textarea = document.getElementById(`notes-textarea-${scheduleId}`);
+  const notes = textarea.value.trim();
+  const schedule = schedules.find((s) => s.id === scheduleId);
+
+  if (!schedule) return;
+
+  try {
+    await db.collection("schedules").doc(scheduleId).update({
+      notes: notes,
+    });
+
+    // Track notes update event
+    if (analytics) {
+      analytics.logEvent("notes_updated", {
+        vehicle_number: schedule.vehicleNumber,
+      });
+    }
+
+    showSuccess("errorMessage", "✅ Notes updated successfully!");
+    await loadSchedules();
+  } catch (error) {
+    console.error("Error updating notes:", error);
+    showError("errorMessage", "❌ Failed to update notes");
+  }
 }
 
 // ========================================
