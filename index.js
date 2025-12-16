@@ -451,6 +451,7 @@ document
         notes: notes,
         expenses: [], // Initialize empty expenses array
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
       // Track schedule creation event
@@ -553,6 +554,7 @@ async function deleteExpense(index) {
   try {
     await db.collection("schedules").doc(currentScheduleId).update({
       expenses: expenses,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
 
     await loadSchedules();
@@ -589,6 +591,7 @@ document
     try {
       await db.collection("schedules").doc(currentScheduleId).update({
         expenses: expenses,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
       // Track expense event
@@ -637,6 +640,7 @@ async function updateBookingAmount() {
       .doc(currentScheduleId)
       .update({
         bookingAmount: parseFloat(newBookingAmount),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
     // Track booking update event
@@ -913,6 +917,7 @@ async function saveNotes(scheduleId) {
   try {
     await db.collection("schedules").doc(scheduleId).update({
       notes: notes,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
 
     // Track notes update event
