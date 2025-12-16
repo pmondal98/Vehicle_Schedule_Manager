@@ -18,9 +18,10 @@ A comprehensive web application for managing vehicle schedules, tracking expense
 
 - Create vehicle schedules with dates, vehicle numbers, and passenger details
 - Track booking amounts/fares
-- Add notes for destinations, advance payments, and instructions
+- Add and edit notes directly in schedule cards with pencil icon (✎)
 - Smart collision detection prevents double-booking
 - Automatic trip duration calculation
+- **Active & Completed Schedules** tabs: Automatically archives schedules when the "To Date" has passed
 
 ### 💰 Expense Tracking & Analysis
 
@@ -31,12 +32,28 @@ A comprehensive web application for managing vehicle schedules, tracking expense
 - Visual indicators: 💰 Green for profit, 📉 Red for loss
 - Edit booking amounts anytime with instant recalculation
 
+### 📝 Inline Notes Editing
+
+- Click the pencil icon (✎) next to notes to edit inline
+- No modal popups - edit directly in schedule card
+- Save or cancel changes with action buttons
+- Notes displayed with smooth animations
+
+### 🗂️ Schedule Organization
+
+- **Active Schedules Tab**: Shows all ongoing and upcoming schedules
+- **Completed Schedules Tab**: Automatically shows past schedules (after "To Date")
+- Easy switching between tabs without re-entering filters
+- Archive badge shows "✓ Completed" on archived schedules
+
 ### 🔍 Additional Features
 
 - Quick search by vehicle number with real-time filtering
+- Works across both active and completed schedule views
 - Fully responsive design (mobile, tablet, desktop)
 - Touch-friendly interface
 - Modern UI with glassmorphism effects
+- Timestamped data: `createdAt` and `updatedAt` fields track schedule history
 
 ## 🛠️ Tech Stack
 
@@ -65,6 +82,11 @@ A comprehensive web application for managing vehicle schedules, tracking expense
 
 ## 📖 How to Use
 
+### Viewing Schedules
+
+- **Active Schedules**: Click "Active Schedules" tab to see all ongoing/upcoming schedules
+- **Completed Schedules**: Click "Completed Schedules" tab to view past schedules (automatically moved when "To Date" passes)
+
 ### Adding a Schedule
 
 **Fill in the form:**
@@ -76,6 +98,15 @@ A comprehensive web application for managing vehicle schedules, tracking expense
 - **Notes**: Destination, advance payment, special instructions
 
 **Click "Add Schedule"** - Your schedule appears with initial profit/loss
+
+### Editing Notes Inline
+
+1. **Click the pencil icon (✎)** next to notes in any schedule card
+2. **Edit text** in the textarea that appears
+3. **Save or Cancel**:
+   - Click **"Save"** to update and persist changes
+   - Click **"Cancel"** to discard changes
+4. Notes display returns with updated content
 
 ### Managing Expenses
 
@@ -99,7 +130,7 @@ A comprehensive web application for managing vehicle schedules, tracking expense
 
 ### Search & Delete
 
-- **Search**: Type vehicle number in search bar - results filter instantly
+- **Search**: Type vehicle number in search bar - results filter instantly across current tab
 - **Delete**: Click "Delete" button on schedule card to remove permanently
 
 ## 📊 Profit/Loss Calculation
@@ -169,6 +200,18 @@ A: Internet connection required for real-time cloud sync and backup.
 
 **Q: Can I book the same vehicle for overlapping dates?**  
 A: No, collision detection prevents double-booking automatically.
+
+**Q: How do I edit notes?**  
+A: Click the pencil icon (✎) next to notes in any schedule card to edit inline. No modal popups needed!
+
+**Q: Where do old schedules go?**  
+A: They automatically move to the "Completed Schedules" tab once their "To Date" has passed. They're not deleted, just archived for reference.
+
+**Q: Can I search completed schedules?**  
+A: Yes! The search works across both Active and Completed schedule tabs.
+
+**Q: Can I see when a schedule was created or last updated?**  
+A: Yes, all schedules have `createdAt` (creation time) and `updatedAt` (last modification time) timestamps in Firestore.
 
 **Q: Can I edit expenses?**  
 A: Delete and re-add with correct information. Direct editing coming in future updates.
