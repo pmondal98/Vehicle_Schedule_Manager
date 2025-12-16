@@ -53,7 +53,6 @@ A comprehensive web application for managing vehicle schedules, tracking expense
 - Fully responsive design (mobile, tablet, desktop)
 - Touch-friendly interface
 - Modern UI with glassmorphism effects
-- Timestamped data: `createdAt` and `updatedAt` fields track schedule history
 
 ## 🛠️ Tech Stack
 
