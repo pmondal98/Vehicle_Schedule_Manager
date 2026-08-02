@@ -1,4 +1,4 @@
-# 🚗 Vehicle Schedule Manager
+# 🚗 Vehicle Manager
 
 A comprehensive web application for managing vehicle schedules, tracking expenses, and calculating profit/loss for vehicle bookings. Perfect for taxi operators, rental services, and fleet managers.
 
@@ -231,7 +231,7 @@ A: Click "Forgot Password?" on login page and check email for reset link.
 
 ## 📞 Support
 
-**Contact**: [pmondal98.netlify.app](https://pmondal98.netlify.app/)  
+**Contact**: [prabhasmondal.netlify.app](https://prabhasmondal.netlify.app/)  
 **Developer**: Prabhas Mondal
 
 ### Common Issues
@@ -244,4 +244,4 @@ A: Click "Forgot Password?" on login page and check email for reset link.
 ---
 
 **Made with ❤️ by Prabhas Mondal**  
-© 2025 Vehicle Schedule Manager. All rights reserved.
+© 2025 Vehicle Manager. All rights reserved.
